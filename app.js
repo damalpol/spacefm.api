@@ -11,7 +11,7 @@ const CONTRACT_ADDRESS = "0xC56190E204C1c77Fd887d9E711938fbA05830e76";
 const URL_PROVIDER = "https://rpc-mumbai.maticvigil.com";							
 const NFT_DESCRIPTION = "This Raiders NFT collection includes a chance to win access to a luxury suite at the 2024 Super Bowl.";
 const NFT_IMAGE = "https://ipfs.io/ipfs/QmRwowxzxKSpbBfxBywA7opysymy54nYzJcQ2eApdmYtyv";
-const ACTIVE_NETWORK = "matic";
+const ACTIVE_NETWORK = "mumbai";
 // *******************************************************************
 
 const PORT = 3000
@@ -93,29 +93,35 @@ async function initAPI() {
 async function serveMetadata(res, nft_id,_network,_contract) {
 var url = "http://127.0.0.1:8545";
  var sym = "ganache";
+  var net = "";
 
-  try {    
+  try {
+    
     switch (_network) {
       case "80001":
         url = "https://rpc-mumbai.maticvigil.com";
         sym = "matic";
+        net = "mumbai";
         break;
       case "56":  //MAINNET
         url = "https://bsc-dataseed.binance.org/";
         sym = "bnb";
+        net = sym;
         break;
       case "137": //MAINNET
         url="https://polygon.llamarpc.com";
         sym = "matic";
+        net = sym;
         break;
       case "1":  //MAINNET 
         url = "https://eth.llamarpc.com";
         sym="eth";
-        break;  
+        net = sym;
+        break;     
 
-    }	
+    }
 
-if ( sym==ACTIVE_NETWORK) { 
+if ( net==ACTIVE_NETWORK) { 
   	provider = new ethers.providers.JsonRpcProvider(url);
     signer = provider.getSigner();
     contract = new ethers.Contract(_contract, abi, provider);  
@@ -166,29 +172,36 @@ if ( sym==ACTIVE_NETWORK) {
 async function tokensOfOwner(res, owner_address,_network,_contract) {
 var url = "http://127.0.0.1:8545";
  var sym = "ganache";
+ var net = "";
 
-  try {    
+  try {
+    
     switch (_network) {
       case "80001":
         url = "https://rpc-mumbai.maticvigil.com";
         sym = "matic";
+        net = "mumbai";
         break;
       case "56":  //MAINNET
         url = "https://bsc-dataseed.binance.org/";
         sym = "bnb";
+        net = sym;
         break;
       case "137": //MAINNET
         url="https://polygon.llamarpc.com";
         sym = "matic";
+        net = sym;
         break;
       case "1":  //MAINNET 
         url = "https://eth.llamarpc.com";
         sym="eth";
-        break;  
+        net = sym;
+        break;      
 
-    }	
 
-	if ( sym==ACTIVE_NETWORK) {   
+    }
+
+	if ( net==ACTIVE_NETWORK) {   
 
   	provider = new ethers.providers.JsonRpcProvider(url);
     signer = provider.getSigner();
@@ -229,6 +242,7 @@ async function contractInfo(res,_network,_contract) {
   
  var url = "http://127.0.0.1:8545";
  var sym = "ganache";
+  var net = "";
 
   try {
     
@@ -236,24 +250,28 @@ async function contractInfo(res,_network,_contract) {
       case "80001":
         url = "https://rpc-mumbai.maticvigil.com";
         sym = "matic";
+        net = "mumbai";
         break;
       case "56":  //MAINNET
         url = "https://bsc-dataseed.binance.org/";
         sym = "bnb";
+        net = sym;
         break;
       case "137": //MAINNET
         url="https://polygon.llamarpc.com";
         sym = "matic";
+        net = sym;
         break;
       case "1":  //MAINNET 
         url = "https://eth.llamarpc.com";
         sym="eth";
+        net = sym;
         break;      
 
 
     }
     
-if ( sym==ACTIVE_NETWORK) {  
+if ( net==ACTIVE_NETWORK) {  
 
     provider = new ethers.providers.JsonRpcProvider(url);
     signer = provider.getSigner();
@@ -327,6 +345,7 @@ async function assetsOfWallet(res,wallet,_network,_contract) {
  var sc = "" 
  var url = "http://127.0.0.1:8545";
  var sym = "eth";
+ var net = "";
 
   try {
     
@@ -334,28 +353,39 @@ async function assetsOfWallet(res,wallet,_network,_contract) {
       case "80001":
         url = "https://rpc-mumbai.maticvigil.com";
         sym = "matic";
+        net = "mumbai";
         break;
       case "56":  //MAINNET
         url = "https://bsc-dataseed.binance.org/";
         sym = "bnb";
+        net = sym;
         break;
       case "137": //MAINNET
         url="https://polygon.llamarpc.com";
         sym = "matic";
+        net = sym;
         break;
       case "1":  //MAINNET 
         url = "https://eth.llamarpc.com";
         sym="eth";
+        net = sym;
         break;      
 
 
     }
     
+
     provider = new ethers.providers.JsonRpcProvider(url);
     signer = provider.getSigner();
     contract = new ethers.Contract(_contract, abi, provider);
-    const eth_bal = ethers.utils.formatEther(await provider.getBalance(wallet))    
-    const nft_bal = await contract.tokensOfOwner(wallet) 
+    const eth_bal = ethers.utils.formatEther(await provider.getBalance(wallet))  
+    var nft_bal;
+
+	if ( net==ACTIVE_NETWORK) { 
+	    nft_bal = await contract.tokensOfOwner(wallet) 
+	} else {
+		nft_bal = [];
+	}
 
 	// BRONCE :
 	// SILVER :
@@ -374,9 +404,11 @@ async function assetsOfWallet(res,wallet,_network,_contract) {
 	    case (_level >4): //>=75
 	        user_level="silver";
 	        break;
-
-	    default:
+	    case (_level >=1): //>=75
 	        user_level="bronze";
+	        break;
+	    default:
+	        user_level="none";
 	}
 
     
@@ -410,7 +442,21 @@ async function assetsOfWallet(res,wallet,_network,_contract) {
 
   } catch(e) {
     console.log(e)
-    res.send(e)
+    if (net=="") { // network not found
+ 		sc ='{'
+      	sc+='"eth_balance":"0"'
+      	sc+=',"nft_balance":"0"'
+      	sc+=',"eth_rate":"0"'
+      	sc+=',"eth_value":"0"'
+ 	  	sc+=',"user_level":"none"'      
+      	sc+='}'    
+      var myObj = JSON.parse(sc);
+      res.send(myObj) 
+
+    } else {
+    	res.send(e)
+    }
+    
   }
 }
  
@@ -479,9 +525,9 @@ app.get('/superbowl/nfts/:address/:network', (req, res) => {
 
 app.get('/info', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
-  var s = "SPACE.FM smart contract API V1.2\n\n"
+  var s = "SPACE.FM smart contract API V1.21\n\n"
   s += "EVM network ID supported (80001:MUMBAI, 56:BNB, 137:POLYGON, 1:ETH )\n"
-  s += "User level based on NFT (bronze:<=4, silver>4, gold:>8, diamont:>16 )\n\n"
+  s += "User level based on NFT (none:=0, bronze:<=4, silver>4, gold:>8, diamont:>16 )\n\n"
 
 
   s += "/superbowl/nfts/<wallet address>/<network id>\n"
