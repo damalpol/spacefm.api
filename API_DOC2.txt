@@ -14,8 +14,8 @@ http://<SERVER>/ticket/:id/:network/:contract
 returns 
 NFT ticket :id from network :network using smart contract address :contract
 
-http://localhost:3000/ticket/1/80001/0xc5853a613603ac98873B240f247E8D1A50da082C
-http://localhost:3000/ticket/1/80001/0x32C5189571661165C98B6b54CD953F108a32A11a
+https://spacefm-api.onrender.com/ticket/1/80001/0xc5853a613603ac98873B240f247E8D1A50da082C
+https://spacefm-api.onrender.com/ticket/1/80001/0x32C5189571661165C98B6b54CD953F108a32A11a
 
 
 2. NFT tickets
@@ -29,8 +29,8 @@ http://<SERVER>/tickets/:wallet/:network/:contract
 returns
 Array of NFT tickets own by :wallet from network :network using smart contract address :contract
 
-http://localhost:3000/tickets/0x7eF07CEcbD3b73d9dfACCD51cF3dae2d1B2Ef139/80001/0xc5853a613603ac98873B240f247E8D1A50da082C
+https://spacefm-api.onrender.com/tickets/0x7eF07CEcbD3b73d9dfACCD51cF3dae2d1B2Ef139/80001/0xc5853a613603ac98873B240f247E8D1A50da082C
 
-http://localhost:3000/tickets/0x7eF07CEcbD3b73d9dfACCD51cF3dae2d1B2Ef139/80001/0x32C5189571661165C98B6b54CD953F108a32A11a
+https://spacefm-api.onrender.com/tickets/0x7eF07CEcbD3b73d9dfACCD51cF3dae2d1B2Ef139/80001/0x32C5189571661165C98B6b54CD953F108a32A11a
 
 
