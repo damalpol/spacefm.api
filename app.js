@@ -9,14 +9,14 @@ var PRESALE_ACTIVE=""
 // CHANGE ************************************************************
 const CONTRACT_ADDRESS = "0xC56190E204C1c77Fd887d9E711938fbA05830e76";
 const URL_PROVIDER = "https://rpc-mumbai.maticvigil.com";							
-const NFT_DESCRIPTION = "This Raiders NFT collection includes a chance to win access to a luxury suite at the 2024 Super Bowl.";
-const NFT_IMAGE = "https://ipfs.io/ipfs/QmRwowxzxKSpbBfxBywA7opysymy54nYzJcQ2eApdmYtyv";
+var NFT_DESCRIPTION = "No description available.";
+var NFT_IMAGE = "https://ipfs.io/ipfs/QmRwowxzxKSpbBfxBywA7opysymy54nYzJcQ2eApdmYtyv";
 const ACTIVE_NETWORK = "mumbai";
 // *******************************************************************
 
 const PORT = 3000
 const IS_REVEALED = true
-const CONTRACT_NAME = "SuperBowl NFT raffle ticket"
+var CONTRACT_NAME = "SuperBowl NFT raffle ticket"
 const UNREVEALED_METADATA = {
   "name":"NFT ???",
   "description":"???",
@@ -29,10 +29,11 @@ const UNREVEALED_METADATA = {
 
 const fs = require('fs')
 const express = require('express')
+const fetch = require('node-fetch')
 const ethers = require('ethers')
 var cors = require('cors');
 require('dotenv').config()
-const abi = require('./Contract.json')
+const abi = require('./abi_contract.json')
 const axios = require('axios')
 //const Contract = require('web3-eth-contract')
 //Contract.setProvider(process.env.GANACHE_RPC_URL)
@@ -68,7 +69,7 @@ async function initAPI() {
 	  PRESALE_ACTIVE = await contract.presaleActive();
 
 	  console.log("");
-	  console.log("----- Smart Contract Info -----" );
+	  console.log("----- Smart Contract Info TEST -----" );
 	  console.log("MAX_SUPPLY is: " + MAX_SUPPLY);
 	  console.log("MAX_PRESALE_SUPPLY is: " + MAX_PRESALE_SUPPLY);
 	  console.log("INITIAL_PRICE is: " + INITIAL_PRICE);
@@ -127,6 +128,19 @@ if ( net==ACTIVE_NETWORK) {
     contract = new ethers.Contract(_contract, abi, provider);  
 
 	  var token_count = parseInt(await contract.totalSupply())
+    CONTRACT_NAME = await contract.name();
+
+    if (_contract=="0xc5853a613603ac98873B240f247E8D1A50da082C") {
+      NFT_IMAGE="https://ipfs.io/ipfs/bafybeiastoaktrlnuzolaysa3bbbm7glqqxjfprwnj3qu3ktlbhn3af3bi/luxboat.jpg";
+      NFT_DESCRIPTION="This NFT collection includes a chance to win access to a luxury Boat prototype!.";
+
+    } else if (_contract=="0x32C5189571661165C98B6b54CD953F108a32A11a") {
+      NFT_IMAGE="https://ipfs.io/ipfs/bafybeiastoaktrlnuzolaysa3bbbm7glqqxjfprwnj3qu3ktlbhn3af3bi/aircraft.jpg";
+      NFT_DESCRIPTION="Space craft flying light prototype.";
+    }
+        
+
+  
 	  CURRENT_PRICE = ethers.utils.formatEther(await contract.price());
 	  let return_value 
 	  if(nft_id < 0)
@@ -205,9 +219,22 @@ var url = "http://127.0.0.1:8545";
 
   	provider = new ethers.providers.JsonRpcProvider(url);
     signer = provider.getSigner();
-    contract = new ethers.Contract(_contract, abi, provider);   
+    contract = new ethers.Contract(_contract, abi, provider);  
+    CONTRACT_NAME = await contract.name();
+
 	  var return_new = [] 
-	  var return_value = await contract.tokensOfOwner(owner_address);   
+	  var return_value = await contract.tokensOfOwner(owner_address); 
+
+    if (_contract=="0xc5853a613603ac98873B240f247E8D1A50da082C") {
+      NFT_IMAGE="https://ipfs.io/ipfs/bafybeiastoaktrlnuzolaysa3bbbm7glqqxjfprwnj3qu3ktlbhn3af3bi/luxboat.jpg";
+      NFT_DESCRIPTION="This NFT collection includes a chance to win access to a luxury Boat prototype!.";
+
+    } else if (_contract=="0x32C5189571661165C98B6b54CD953F108a32A11a") {
+      NFT_IMAGE="https://ipfs.io/ipfs/bafybeiastoaktrlnuzolaysa3bbbm7glqqxjfprwnj3qu3ktlbhn3af3bi/aircraft.jpg";
+      NFT_DESCRIPTION="Space craft flying light prototype.";
+    }
+        
+
 	  return_value.forEach(element => {
 	    //var rawdata = fs.readFileSync("./metadata/" + element);
 	   	  let sc ='{'
@@ -479,18 +506,28 @@ async function getNonce(signer) {
 ///////////////////////////////////////////////////////////////////
 
 
-app.get('/superbowl/nft/:id/:network', (req, res) => {
+app.get('/ticket/:id/:network/:contract', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
-  if(isNaN(req.params.id))//in not number
+  if(req.params.contract && req.params.network && req.params.id)
   {
-    res.send(UNREVEALED_METADATA)    
+    serveMetadata(res, req.params.id,req.params.network,req.params.contract)
   }
-  else if(!IS_REVEALED)
+  else 
   {
     res.send()
-  }else
+  }  
+})
+
+
+app.get('/tickets/:address/:network/:contract', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  if(req.params.address && req.params.network && req.params.contract)//in not number
   {
-    serveMetadata(res, req.params.id,req.params.network,CONTRACT_ADDRESS)
+    tokensOfOwner(res, req.params.address, req.params.network,req.params.contract)    
+  }
+  else 
+  {
+    res.send()
   }
 })
 
@@ -507,20 +544,6 @@ app.get('/wallet/balances/:address/:network', (req, res) => {
     res.send()
   }
 })
-
-
-app.get('/superbowl/nfts/:address/:network', (req, res) => {
-  res.setHeader('Content-Type', 'application/json');
-  if(req.params.address && req.params.network)//in not number
-  {
-    tokensOfOwner(res, req.params.address, req.params.network,CONTRACT_ADDRESS)    
-  }
-  else 
-  {
-    res.send()
-  }
-})
-
 
 
 app.get('/info', (req, res) => {

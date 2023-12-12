@@ -1,0 +1,53 @@
+
+Working demo (brave browser) 
+----------------------------
+spacefm.nft
+
+
+Smart Contract addresses
+------------------------
+
+luxury boat metadata 00.contract (SLT00 ERC721 token)
+0xc5853a613603ac98873B240f247E8D1A50da082C
+
+aircraft metadata 01.contract (SLT01 ERC721 token)
+0x32C5189571661165C98B6b54CD953F108a32A11a
+
+
+Networks code
+----------------------
+testnet
+80001   MUMBAI (polygon)	<<< available
+
+
+mainnet
+56      BNB smart chain
+137     Polygon MATIC
+1       Ethereum
+
+
+MUMBAI polygon explorer (aka SCAN)
+----------------------------------
+
+https://mumbai.polygonscan.com/address/0xc5853a613603ac98873b240f247e8d1a50da082c
+https://mumbai.polygonscan.com/address/0x32C5189571661165C98B6b54CD953F108a32A11a
+
+
+Token ERC721 tracker
+---------------------
+https://mumbai.polygonscan.com/token/0xc5853a613603ac98873b240f247e8d1a50da082c
+https://mumbai.polygonscan.com/token/0x32C5189571661165C98B6b54CD953F108a32A11a
+
+
+NFT METADATA 
+-----------------------------
+
+luxury boat metadata 0 (json)
+https://ipfs.io/ipfs/bafybeicnkdbfojdtwqde4kvpy4io6auyajy2oroauzdj5rrsyo5l2zfqy4/0
+
+
+aircraft metadata 1 (json)
+https://ipfs.io/ipfs/bafybeicnkdbfojdtwqde4kvpy4io6auyajy2oroauzdj5rrsyo5l2zfqy4/1
+
+
+

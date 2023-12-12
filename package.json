@@ -1,7 +1,7 @@
 {
-  "name": "superbowltickets",
+  "name": "lotterytickets",
   "version": "1.0.0",
-  "description": "SuperBowl NFT tickets collection",
+  "description": "NFT lottery tickets",
   "main": "index.js",
   "dependencies": {
     "axios": "^0.21.4",
@@ -11,12 +11,13 @@
     "encoding": "^0.1.13",
     "ethers": "^5.6.9",
     "express": "^4.17.2",
+    "node-fetch": "^2.7.0",
     "nodemon": "^2.0.22",
     "utf-8-validate": "^5.0.10"
   },
   "scripts": {
     "start": "nodemon app.js"
   },
-  "author": "",
+  "author": "atomsoft.nft",
   "license": "ISC"
 }
